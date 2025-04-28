@@ -3,8 +3,18 @@ import { Button, TextInput, Title, Text, Stack, Center, Container, Modal, Group,
 import { useDisclosure } from '@mantine/hooks';
 import Confetti from 'react-confetti';
 import { useWindowSize } from './hooks/useWindowSize';
-import { questionBank, TriviaQuestion } from './data/questionBank';
 import { distance } from 'fastest-levenshtein';
+
+import {
+  sundayQuestions,
+  mondayQuestions,
+  tuesdayQuestions,
+  wednesdayQuestions,
+  thursdayQuestions,
+  fridayQuestions,
+  saturdayQuestions,
+  TriviaQuestion,
+} from './data/questionBank';
 
 interface AppProps {
   toggleColorScheme: () => void;
@@ -22,10 +32,10 @@ const sportIcons: Record<string, string> = {
   olympics: "🏅",
 };
 
-const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
-  const isDark = colorScheme === 'dark';
-  const { width, height } = useWindowSize();
+const RULES_VERSION = "2";
 
+const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
+  const { width, height } = useWindowSize();
   const [rulesOpened, { open: openRules, close: closeRules }] = useDisclosure(false);
   const [statsOpened, { open: openStats, close: closeStats }] = useDisclosure(false);
   const [answer, setAnswer] = useState('');
@@ -39,16 +49,29 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
   const [hintsVisible, setHintsVisible] = useState(0);
   const [correctGuesses, setCorrectGuesses] = useState<string[]>([]);
 
-  const today = new Date();
-  const formattedDate = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
-  const isSaturday = today.getDay() === 6;
+  // --- Fake Today Mode for testing ---
+  const FAKE_DAY_OVERRIDE: number | null = null; // Set 0-6 to simulate day (0=Sunday, etc.)
 
-  const todayQuestion: TriviaQuestion = isSaturday
-    ? questionBank.find(q => q.type === 'list')!
-    : questionBank.filter(q => q.type === 'single')[dayOfYear % questionBank.filter(q => q.type === 'single').length];
+  const today = new Date();
+  const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
+  const effectiveDay = FAKE_DAY_OVERRIDE !== null ? FAKE_DAY_OVERRIDE : today.getDay();
+  const effectiveDayOfYear = FAKE_DAY_OVERRIDE !== null ? 100 : dayOfYear;
+
+  // --- Pick correct difficulty question ---
+  let todayQuestion: TriviaQuestion;
+  switch (effectiveDay) {
+    case 0: todayQuestion = sundayQuestions[effectiveDayOfYear % sundayQuestions.length]; break;
+    case 1: todayQuestion = mondayQuestions[effectiveDayOfYear % mondayQuestions.length]; break;
+    case 2: todayQuestion = tuesdayQuestions[effectiveDayOfYear % tuesdayQuestions.length]; break;
+    case 3: todayQuestion = wednesdayQuestions[effectiveDayOfYear % wednesdayQuestions.length]; break;
+    case 4: todayQuestion = thursdayQuestions[effectiveDayOfYear % thursdayQuestions.length]; break;
+    case 5: todayQuestion = fridayQuestions[effectiveDayOfYear % fridayQuestions.length]; break;
+    case 6: todayQuestion = saturdayQuestions[effectiveDayOfYear % saturdayQuestions.length]; break;
+    default: todayQuestion = sundayQuestions[0];
+  }
 
   const sportIcon = sportIcons[todayQuestion.sport] || "";
+  const isDark = colorScheme === 'dark';
 
   const handleResetProgress = () => {
     if (confirm("Are you sure you want to reset all progress? This cannot be undone.")) {
@@ -58,17 +81,18 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
   };
 
   const handleCloseRules = () => {
-    localStorage.setItem('hasSeenRules_v2', 'true'); // use v2 to force show new users
+    localStorage.setItem('rules_version', RULES_VERSION);
     closeRules();
   };
 
   useEffect(() => {
-    if (!localStorage.getItem('hasSeenRules_v2')) {
+    const storedRulesVersion = localStorage.getItem('rules_version');
+    if (storedRulesVersion !== RULES_VERSION) {
       openRules();
     }
 
     const lastAnswered = localStorage.getItem('answeredDate');
-    if (lastAnswered === formattedDate) {
+    if (lastAnswered === today.toLocaleDateString()) {
       setHasAnsweredToday(true);
     }
 
@@ -88,7 +112,7 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
     }
 
     setStats(savedStats);
-  }, [formattedDate]);
+  }, []);
 
   const checkAnswer = () => {
     if (hasAnsweredToday && todayQuestion.type === 'single') return;
@@ -145,7 +169,7 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
   const updateStats = (isCorrect: boolean) => {
     const updatedStats = { ...stats };
     const updatedWeekly = { ...weeklyProgress };
-    const dayIndex = today.getDay();
+    const dayIndex = effectiveDay;
 
     if (isCorrect) {
       updatedStats.correct += 1;
@@ -160,7 +184,7 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
 
     localStorage.setItem('stats', JSON.stringify(updatedStats));
     localStorage.setItem('weeklyProgress', JSON.stringify(updatedWeekly));
-    localStorage.setItem('answeredDate', formattedDate);
+    localStorage.setItem('answeredDate', today.toLocaleDateString());
   };
 
   const isPerfectWeek = () => {
@@ -184,11 +208,9 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
         <Modal opened={rulesOpened} onClose={handleCloseRules} title="How It Works" centered>
           <Stack gap="md">
             <Text size="md">- One sports trivia question per day</Text>
-            <Text size="md">- You get 3 guesses (for normal questions)</Text>
-            <Text size="md">- After wrong guesses, hints unlock</Text>
-            <Text size="md">- Saturday = hardest (Top 7 challenge!)</Text>
-            <Text size="md">- Sunday = easiest, Saturday = hardest</Text>
-            <Text size="md">- Partial matches and typos are accepted!</Text>
+            <Text size="md">- Difficulty increases throughout the week</Text>
+            <Text size="md">- 3 guesses, hints unlock after wrong tries</Text>
+            <Text size="md">- Saturday is \"Top 7 Challenge\" mode!</Text>
             <Button variant="light" fullWidth onClick={handleCloseRules}>
               Let's Go!
             </Button>
@@ -196,7 +218,6 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
         </Modal>
 
         <Stack gap="md" align="center">
-
           <Flex gap="xs">
             <Button color="gray" variant="light" onClick={toggleColorScheme}>
               {isDark ? "☀️" : "🌙"}
@@ -210,17 +231,14 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
             Am I A Casual?
           </Title>
 
-          <Text size="sm" c="dimmed">{sportIcon} {formattedDate}</Text>
+          <Text size="sm" c="dimmed">{sportIcon} {today.toLocaleDateString()}</Text>
 
           {!hasAnsweredToday || todayQuestion.type === 'list' ? (
             <>
-              <Text size="lg" c={isDark ? "white": "black"}>{todayQuestion.question}</Text>
+              <Text size="lg" c={isDark ? 'white' : 'black'}>{todayQuestion.question}</Text>
               <TextInput
                 placeholder="Type your answer..."
                 value={answer}
-                radius="xl"
-                mt="md"
-                c={isDark ? "white" : "black"}
                 onChange={(e) => setAnswer(e.currentTarget.value)}
               />
               <Button onClick={checkAnswer}>Submit</Button>
@@ -251,7 +269,6 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
             <>
               <Text size="lg" c="darkgreen">{todayQuestion.question}</Text>
               <Text size="md" c="green">You already answered today's trivia!</Text>
-
               <Button
                 size="sm"
                 color={result.includes('Correct') ? 'green' : result.includes('Casual') || result.includes('Wrong') ? 'red' : 'gray'}
@@ -261,10 +278,9 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
                 {showSubmittedAnswer ? submittedAnswer : "View Answer"}
               </Button>
 
-              {result && <Text fw={700}>{result}</Text>}
+              {result && <Text c={isDark ? "white" : "black" } fw={700}>{result}</Text>}
             </>
           )}
-
         </Stack>
 
         {/* Stats Modal */}
@@ -309,7 +325,6 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
           </Stack>
         </Modal>
 
-        {/* Reset Progress Button */}
         <Center mt="xl">
           <Button variant="subtle" size="xs" color="gray" onClick={handleResetProgress} style={{ fontSize: '10px', opacity: 0.6 }}>
             Reset Progress
