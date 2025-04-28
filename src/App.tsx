@@ -5,7 +5,7 @@ import Confetti from 'react-confetti';
 import { useWindowSize } from './hooks/useWindowSize';
 import { questionBank, TriviaQuestion } from './data/questionBank';
 import { Flex} from '@mantine/core';
-import { levenshtein } from 'fastest-levenshtein'; // ✏️ we'll install a tiny lib for string similarity
+import { distance } from 'fastest-levenshtein'; // ✏️ we'll install a tiny lib for string similarity
 
 interface AppProps {
   toggleColorScheme: () => void;
@@ -52,7 +52,7 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
     ? questionBank.find(q => q.type === 'list')!
     : questionBank.filter(q => q.type === 'single')[dayOfYear % questionBank.filter(q => q.type === 'single').length];
 
-  const sportIcon = sportIcons[todayQuestion.sport] || "❓";
+  const sportIcon = sportIcons[todayQuestion.sport] || "";
 
   useEffect(() => {
     const lastAnswered = localStorage.getItem('answeredDate');
@@ -97,7 +97,7 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
         updateStats(true);
         setHasAnsweredToday(true);
       } else {
-        const close = correctAnswers.some(ans => levenshtein(userAnswer, ans) <= 2);
+        const close = correctAnswers.some(ans => distance(userAnswer, ans) <= 2);
   
         if (close) {
           setResult('Close! 🤏');
