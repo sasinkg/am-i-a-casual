@@ -10,7 +10,6 @@ interface AppProps {
   toggleColorScheme: () => void;
   colorScheme: 'light' | 'dark';
 }
-const RULES_VERSION = "2"; // bump this number whenever you want to show rules modal again
 
 const sportIcons: Record<string, string> = {
   basketball: "🏀",
@@ -215,10 +214,13 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
 
           {!hasAnsweredToday || todayQuestion.type === 'list' ? (
             <>
-              <Text size="lg">{todayQuestion.question}</Text>
+              <Text size="lg" c={isDark ? "white": "black"}>{todayQuestion.question}</Text>
               <TextInput
                 placeholder="Type your answer..."
                 value={answer}
+                radius="xl"
+                mt="md"
+                c={isDark ? "white" : "black"}
                 onChange={(e) => setAnswer(e.currentTarget.value)}
               />
               <Button onClick={checkAnswer}>Submit</Button>
