@@ -1,17 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Button, TextInput, Title, Text, Stack, Center, Container, Modal, Group, Box } from '@mantine/core';
+import { Button, TextInput, Title, Text, Stack, Center, Container, Modal, Group, Box, Flex } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Confetti from 'react-confetti';
 import { useWindowSize } from './hooks/useWindowSize';
 import { questionBank, TriviaQuestion } from './data/questionBank';
-import { Flex} from '@mantine/core';
-import { distance } from 'fastest-levenshtein'; // ✏️ we'll install a tiny lib for string similarity
+import { distance } from 'fastest-levenshtein';
 
 interface AppProps {
   toggleColorScheme: () => void;
   colorScheme: 'light' | 'dark';
 }
-
 
 const sportIcons: Record<string, string> = {
   basketball: "🏀",
@@ -25,34 +23,24 @@ const sportIcons: Record<string, string> = {
 };
 
 const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
-  const [rulesOpened, { open: openRules, close: closeRules }] = useDisclosure(false);
   const isDark = colorScheme === 'dark';
   const { width, height } = useWindowSize();
+
+  const [rulesOpened, { open: openRules, close: closeRules }] = useDisclosure(false);
+  const [statsOpened, { open: openStats, close: closeStats }] = useDisclosure(false);
   const [answer, setAnswer] = useState('');
   const [result, setResult] = useState('');
-  const [hasAnsweredToday, setHasAnsweredToday] = useState(false);
-  const [statsOpened, { open: openStats, close: closeStats }] = useDisclosure(false);
   const [submittedAnswer, setSubmittedAnswer] = useState('');
   const [showSubmittedAnswer, setShowSubmittedAnswer] = useState(false);
+  const [hasAnsweredToday, setHasAnsweredToday] = useState(false);
   const [stats, setStats] = useState({ correct: 0, wrong: 0, perfectWeeks: 0 });
   const [weeklyProgress, setWeeklyProgress] = useState<Record<number, "correct" | "wrong">>({});
   const [guessCount, setGuessCount] = useState(0);
   const [hintsVisible, setHintsVisible] = useState(0);
   const [correctGuesses, setCorrectGuesses] = useState<string[]>([]);
 
-  const handleResetProgress = () => {
-    if (confirm("Are you sure you want to reset all progress? This cannot be undone.")) {
-      localStorage.clear();
-      window.location.reload();
-    }
-  };
-  
   const today = new Date();
-  const formattedDate = today.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  const formattedDate = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
   const isSaturday = today.getDay() === 6;
 
@@ -61,17 +49,24 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
     : questionBank.filter(q => q.type === 'single')[dayOfYear % questionBank.filter(q => q.type === 'single').length];
 
   const sportIcon = sportIcons[todayQuestion.sport] || "";
-  
+
+  const handleResetProgress = () => {
+    if (confirm("Are you sure you want to reset all progress? This cannot be undone.")) {
+      localStorage.clear();
+      window.location.reload();
+    }
+  };
+
   const handleCloseRules = () => {
-    localStorage.setItem('hasSeenRules', 'true');
+    localStorage.setItem('hasSeenRules_v2', 'true'); // use v2 to force show new users
     closeRules();
   };
 
   useEffect(() => {
-    if (!localStorage.getItem('hasSeenRules')) {
+    if (!localStorage.getItem('hasSeenRules_v2')) {
       openRules();
     }
-    
+
     const lastAnswered = localStorage.getItem('answeredDate');
     if (lastAnswered === formattedDate) {
       setHasAnsweredToday(true);
@@ -97,25 +92,25 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
 
   const checkAnswer = () => {
     if (hasAnsweredToday && todayQuestion.type === 'single') return;
-  
+
     const userAnswer = answer.trim().toLowerCase();
-    setSubmittedAnswer(userAnswer); // Always save the typed answer
-  
+    setSubmittedAnswer(userAnswer);
+
     if (todayQuestion.type === 'single') {
       const correctAnswers = Array.isArray(todayQuestion.answer)
         ? todayQuestion.answer.map(a => a.toLowerCase())
         : [todayQuestion.answer.toLowerCase()];
-  
+
       const directMatch = correctAnswers.some(ans => userAnswer === ans);
       const partialMatch = correctAnswers.some(ans => ans.includes(userAnswer) || userAnswer.includes(ans));
-  
+
       if (directMatch || partialMatch) {
         setResult('Correct! 🏆');
         updateStats(true);
         setHasAnsweredToday(true);
       } else {
         const close = correctAnswers.some(ans => distance(userAnswer, ans) <= 2);
-  
+
         if (close) {
           setResult('Close! 🤏');
         } else {
@@ -130,12 +125,10 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
           }
         }
       }
-    }
-  
-    else if (todayQuestion.type === 'list') {
+    } else if (todayQuestion.type === 'list') {
       const correctAnswers = todayQuestion.answer as string[];
       const match = correctAnswers.find(a => a.toLowerCase() === userAnswer);
-  
+
       if (match && !correctGuesses.includes(match)) {
         setCorrectGuesses(prev => [...prev, match]);
         setAnswer('');
@@ -184,36 +177,39 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
   };
 
   return (
-    <Center style={{ 
-      minHeight: '100vh', 
-      backgroundColor: isDark ? '#1a1b1e' : '#f8f9fa', 
-      transition: 'background-color 0.3s ease'
-    }}>
+    <Center style={{ minHeight: '100vh', backgroundColor: isDark ? '#1a1b1e' : '#f8f9fa', transition: 'background-color 0.3s ease' }}>
       <Container size="xs">
-      <Modal opened={rulesOpened} onClose={handleCloseRules} title="How It Works" centered>
-        <Stack gap="md">
-          <Text size="md">- One sports trivia question per day</Text>
-          <Text size="md">- You get 3 guesses (for normal questions)</Text>
-          <Text size="md">- After each wrong guess, hints unlock</Text>
-          <Text size="md">- Saturday is the hardest — "Top 7" style!</Text>
-          <Text size="md">- Sunday is the easiest, Saturday is the hardest</Text>
-          <Text size="md">- Partial answers and small typos are accepted!</Text>
-          <Button variant="light" fullWidth onClick={handleCloseRules}>
-            Let's Go!
-          </Button>
-        </Stack>
-      </Modal>
+
+        {/* Rules Modal */}
+        <Modal opened={rulesOpened} onClose={handleCloseRules} title="How It Works" centered>
+          <Stack gap="md">
+            <Text size="md">- One sports trivia question per day</Text>
+            <Text size="md">- You get 3 guesses (for normal questions)</Text>
+            <Text size="md">- After wrong guesses, hints unlock</Text>
+            <Text size="md">- Saturday = hardest (Top 7 challenge!)</Text>
+            <Text size="md">- Sunday = easiest, Saturday = hardest</Text>
+            <Text size="md">- Partial matches and typos are accepted!</Text>
+            <Button variant="light" fullWidth onClick={handleCloseRules}>
+              Let's Go!
+            </Button>
+          </Stack>
+        </Modal>
 
         <Stack gap="md" align="center">
+
           <Flex gap="xs">
-            <Button color="grey"onClick={toggleColorScheme} variant="light">
+            <Button color="gray" variant="light" onClick={toggleColorScheme}>
               {isDark ? "☀️" : "🌙"}
             </Button>
-            <Button color="grey"variant="light" onClick={openStats}>📈</Button>
+            <Button color="gray" variant="light" onClick={openStats}>
+              📈
+            </Button>
           </Flex>
+
           <Title order={1} c={isDark ? "white" : "black"}>
             Am I A Casual?
           </Title>
+
           <Text size="sm" c="dimmed">{sportIcon} {formattedDate}</Text>
 
           {!hasAnsweredToday || todayQuestion.type === 'list' ? (
@@ -232,7 +228,6 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
               {todayQuestion.type === 'single' && hintsVisible >= 2 && (
                 <Text size="sm" c="gray">Hint 2: {todayQuestion.hints[1]}</Text>
               )}
-
               {todayQuestion.type === 'list' && (
                 <Group mt="md">
                   {(todayQuestion.answer as string[]).map((ans, idx) => (
@@ -265,12 +260,12 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
 
               {result && <Text fw={700}>{result}</Text>}
             </>
-
           )}
+
         </Stack>
 
         {/* Stats Modal */}
-        <Modal opened={statsOpened} onClose={closeStats}  title="Your Stats" centered>
+        <Modal opened={statsOpened} onClose={closeStats} title="Your Stats" centered>
           <Stack gap="sm" align="center">
             {isPerfectWeek() && (
               <Stack gap="sm" align="center">
@@ -278,7 +273,6 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
                 <Confetti width={width} height={height} />
               </Stack>
             )}
-
             <Text>Total Correct: {stats.correct}</Text>
             <Text>Total Wrong: {stats.wrong}</Text>
             <Text>Perfect Weeks: {stats.perfectWeeks || 0}</Text>
@@ -289,15 +283,12 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
             {submittedAnswer && (
               <Text size="sm" c="dimmed">Your Answer: {submittedAnswer}</Text>
             )}
-
-
             <Group mt="md">
-              {["Su","M","Tu","W","Th","F","Sa"].map((day, idx) => {
+              {["Su", "M", "Tu", "W", "Th", "F", "Sa"].map((day, idx) => {
                 const status = weeklyProgress[idx];
                 let bg = "gray";
                 if (status === "correct") bg = "green";
                 else if (status === "wrong") bg = "red";
-
                 return (
                   <Box
                     key={idx}
@@ -311,15 +302,16 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
                 );
               })}
             </Group>
-
             <Text fw={700} mt="sm">{calculateWeeklyTitle()}</Text>
           </Stack>
         </Modal>
+
+        {/* Reset Progress Button */}
         <Center mt="xl">
-        <Button variant="subtle" size="xs" color="red" onClick={handleResetProgress}>
-          Reset Progress
-        </Button>
-      </Center>
+          <Button variant="subtle" size="xs" color="gray" onClick={handleResetProgress} style={{ fontSize: '10px', opacity: 0.6 }}>
+            Reset Progress
+          </Button>
+        </Center>
 
       </Container>
     </Center>
