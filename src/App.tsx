@@ -10,6 +10,7 @@ interface AppProps {
   toggleColorScheme: () => void;
   colorScheme: 'light' | 'dark';
 }
+const RULES_VERSION = "2"; // bump this number whenever you want to show rules modal again
 
 const sportIcons: Record<string, string> = {
   basketball: "🏀",
