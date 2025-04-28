@@ -25,6 +25,7 @@ const sportIcons: Record<string, string> = {
 };
 
 const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
+  const [rulesOpened, { open: openRules, close: closeRules }] = useDisclosure(false);
   const isDark = colorScheme === 'dark';
   const { width, height } = useWindowSize();
   const [answer, setAnswer] = useState('');
@@ -39,6 +40,13 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
   const [hintsVisible, setHintsVisible] = useState(0);
   const [correctGuesses, setCorrectGuesses] = useState<string[]>([]);
 
+  const handleResetProgress = () => {
+    if (confirm("Are you sure you want to reset all progress? This cannot be undone.")) {
+      localStorage.clear();
+      window.location.reload();
+    }
+  };
+  
   const today = new Date();
   const formattedDate = today.toLocaleDateString('en-US', {
     year: 'numeric',
@@ -53,8 +61,17 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
     : questionBank.filter(q => q.type === 'single')[dayOfYear % questionBank.filter(q => q.type === 'single').length];
 
   const sportIcon = sportIcons[todayQuestion.sport] || "";
+  
+  const handleCloseRules = () => {
+    localStorage.setItem('hasSeenRules', 'true');
+    closeRules();
+  };
 
   useEffect(() => {
+    if (!localStorage.getItem('hasSeenRules')) {
+      openRules();
+    }
+    
     const lastAnswered = localStorage.getItem('answeredDate');
     if (lastAnswered === formattedDate) {
       setHasAnsweredToday(true);
@@ -173,6 +190,20 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
       transition: 'background-color 0.3s ease'
     }}>
       <Container size="xs">
+      <Modal opened={rulesOpened} onClose={handleCloseRules} title="How It Works" centered>
+        <Stack gap="md">
+          <Text size="md">- One sports trivia question per day</Text>
+          <Text size="md">- You get 3 guesses (for normal questions)</Text>
+          <Text size="md">- After each wrong guess, hints unlock</Text>
+          <Text size="md">- Saturday is the hardest — "Top 7" style!</Text>
+          <Text size="md">- Sunday is the easiest, Saturday is the hardest</Text>
+          <Text size="md">- Partial answers and small typos are accepted!</Text>
+          <Button variant="light" fullWidth onClick={handleCloseRules}>
+            Let's Go!
+          </Button>
+        </Stack>
+      </Modal>
+
         <Stack gap="md" align="center">
           <Flex gap="xs">
             <Button color="grey"onClick={toggleColorScheme} variant="light">
@@ -284,6 +315,12 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
             <Text fw={700} mt="sm">{calculateWeeklyTitle()}</Text>
           </Stack>
         </Modal>
+        <Center mt="xl">
+        <Button variant="subtle" size="xs" color="red" onClick={handleResetProgress}>
+          Reset Progress
+        </Button>
+      </Center>
+
       </Container>
     </Center>
   );
