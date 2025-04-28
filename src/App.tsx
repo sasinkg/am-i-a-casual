@@ -5,7 +5,6 @@ import Confetti from 'react-confetti';
 import { useWindowSize } from './hooks/useWindowSize';
 import { questionBank, TriviaQuestion } from './data/questionBank';
 import { Flex} from '@mantine/core';
-import { Transition } from '@mantine/core';
 
 interface AppProps {
   toggleColorScheme: () => void;
