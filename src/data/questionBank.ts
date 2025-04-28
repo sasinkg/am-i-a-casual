@@ -19,7 +19,7 @@ export const questionBank: TriviaQuestion[] = [
   },
   {
     question: "Who won the NBA Finals in 2023?",
-    answer: "Denver Nuggets",
+    answer: ["Denver Nuggets", "Denver", "Nuggets"],
     sport: "basketball",
     hints: ["Led by Nikola Jokic", "First NBA title in franchise history"],
     type: "single",
