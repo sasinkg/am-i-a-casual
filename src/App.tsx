@@ -5,6 +5,7 @@ import Confetti from 'react-confetti';
 import { useWindowSize } from './hooks/useWindowSize';
 import { questionBank, TriviaQuestion } from './data/questionBank';
 import { Flex} from '@mantine/core';
+import { levenshtein } from 'fastest-levenshtein'; // ✏️ we'll install a tiny lib for string similarity
 
 interface AppProps {
   toggleColorScheme: () => void;
@@ -79,32 +80,45 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
 
   const checkAnswer = () => {
     if (hasAnsweredToday && todayQuestion.type === 'single') return;
-
+  
     const userAnswer = answer.trim().toLowerCase();
-    setSubmittedAnswer(answer.trim()); // Save what they typed
-
+    setSubmittedAnswer(userAnswer); // Always save the typed answer
+  
     if (todayQuestion.type === 'single') {
-      const correctAnswer = (todayQuestion.answer as string).toLowerCase();
-
-      if (userAnswer === correctAnswer) {
+      const correctAnswers = Array.isArray(todayQuestion.answer)
+        ? todayQuestion.answer.map(a => a.toLowerCase())
+        : [todayQuestion.answer.toLowerCase()];
+  
+      const directMatch = correctAnswers.some(ans => userAnswer === ans);
+      const partialMatch = correctAnswers.some(ans => ans.includes(userAnswer) || userAnswer.includes(ans));
+  
+      if (directMatch || partialMatch) {
         setResult('Correct! 🏆');
         updateStats(true);
         setHasAnsweredToday(true);
       } else {
-        setResult('Wrong! ❌');
-        setGuessCount(prev => prev + 1);
-        if (guessCount < 2) {
-          setHintsVisible(prev => prev + 1);
-        }
-        if (guessCount >= 2) {
-          updateStats(false);
-          setHasAnsweredToday(true);
+        const close = correctAnswers.some(ans => levenshtein(userAnswer, ans) <= 2);
+  
+        if (close) {
+          setResult('Close! 🤏');
+        } else {
+          setResult('Wrong! ❌');
+          setGuessCount(prev => prev + 1);
+          if (guessCount < 2) {
+            setHintsVisible(prev => prev + 1);
+          }
+          if (guessCount >= 2) {
+            updateStats(false);
+            setHasAnsweredToday(true);
+          }
         }
       }
-    } else if (todayQuestion.type === 'list') {
+    }
+  
+    else if (todayQuestion.type === 'list') {
       const correctAnswers = todayQuestion.answer as string[];
       const match = correctAnswers.find(a => a.toLowerCase() === userAnswer);
-
+  
       if (match && !correctGuesses.includes(match)) {
         setCorrectGuesses(prev => [...prev, match]);
         setAnswer('');
