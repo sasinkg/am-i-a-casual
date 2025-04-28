@@ -210,7 +210,7 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
             <Text size="md">- One sports trivia question per day</Text>
             <Text size="md">- Difficulty increases throughout the week</Text>
             <Text size="md">- 3 guesses, hints unlock after wrong tries</Text>
-            <Text size="md">- Saturday is \"Top 7 Challenge\" mode!</Text>
+            <Text size="md">- Saturday is "Top 7 Challenge" mode!</Text>
             <Button variant="light" fullWidth onClick={handleCloseRules}>
               Let's Go!
             </Button>
@@ -250,19 +250,39 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
                 <Text size="sm" c="gray">Hint 2: {todayQuestion.hints[1]}</Text>
               )}
               {todayQuestion.type === 'list' && (
-                <Group mt="md">
+                <Stack mt="md" align="center" gap="xs">
                   {(todayQuestion.answer as string[]).map((ans, idx) => (
                     <Box
                       key={idx}
-                      w={120}
-                      h={40}
+                      w={250}
+                      h={60}
+                      p="sm"
                       bg={correctGuesses.includes(ans) ? "green" : "gray"}
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '6px', color: 'white' }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '8px',
+                        color: 'white',
+                        fontWeight: 600,
+                        fontSize: '16px',
+                        textAlign: 'center',
+                        transition: 'all 0.3s ease',
+                        transform: correctGuesses.includes(ans) ? 'scale(1)' : 'scale(0.95)',
+                        opacity: correctGuesses.includes(ans) ? 1 : 0.7,
+                      }}
                     >
                       {correctGuesses.includes(ans) ? ans : (idx + 1)}
                     </Box>
                   ))}
-                </Group>
+                  {correctGuesses.length === (todayQuestion.answer as string[]).length && (
+                    <Text size="xl" c="green" fw={700} mt="md">
+                      🏆 You got all 7 correct!
+                    </Text>
+                  )}
+
+                </Stack>
+
               )}
             </>
           ) : (
