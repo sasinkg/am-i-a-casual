@@ -32,7 +32,7 @@ export interface TriviaQuestion {
     { type: 'single', sport: 'football', question: 'Who was the NFL MVP for the 2024 season?', answer: ['Lamar Jackson', 'Lamar'], hints: ['Ravens QB', 'Dual-threat'] },
     { type: 'single', sport: 'soccer', question: 'Which team won the 2024 UEFA Champions League?', answer: ['Real Madrid', 'Madrid'], hints: ['Spanish giants', 'White kits'] },
     { type: 'single', sport: 'baseball', question: 'Who led MLB in home runs in 2024?', answer: 'Aaron Judge', hints: ['Yankees', '62 HR in 2022'] },
-    { type: 'single', sport: 'hockey', question: 'Which team won the 2024 Stanley Cup?', answer: ['Vegas Golden Knights', 'Golden Knights', 'Las Vegas'], hints: ['Las Vegas team', 'Gold uniforms'] },
+    { type: 'single', sport: 'hockey', question: 'Which team won the 2023 Stanley Cup?', answer: ['Vegas Golden Knights', 'Golden Knights', 'Las Vegas'], hints: ['Las Vegas team', 'Gold uniforms'] },
   ];
   
   // WEDNESDAY (Medium-Hard)
