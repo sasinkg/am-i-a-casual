@@ -297,7 +297,7 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
                 variant="light"
                 onClick={() => setShowSubmittedAnswer(true)}
               >
-                {showSubmittedAnswer ? todayQuestion.answer : "View Answer"}
+                {showSubmittedAnswer ? todayQuestion.answer[0] : "View Answer"}
               </Button>
 
               {result && <Text c={isDark ? "white" : "black" } fw={700}>{result}</Text>}
