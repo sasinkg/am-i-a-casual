@@ -116,15 +116,15 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
 
   const checkAnswer = () => {
     if (hasAnsweredToday && todayQuestion.type === 'single') return;
-
+    if (answer.trim().toLowerCase() === "") return;
     const userAnswer = answer.trim().toLowerCase();
     setSubmittedAnswer(userAnswer);
-
+    // console.log(todayQuestion.answer);
     if (todayQuestion.type === 'single') {
       const correctAnswers = Array.isArray(todayQuestion.answer)
         ? todayQuestion.answer.map(a => a.toLowerCase())
         : [todayQuestion.answer.toLowerCase()];
-
+      console.log();
       const directMatch = correctAnswers.some(ans => userAnswer === ans);
       const partialMatch = correctAnswers.some(ans => ans.includes(userAnswer) || userAnswer.includes(ans));
 
@@ -134,7 +134,7 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
         setHasAnsweredToday(true);
       } else {
         const close = correctAnswers.some(ans => distance(userAnswer, ans) <= 2);
-
+        
         if (close) {
           setResult('Close! 🤏');
         } else {
@@ -241,14 +241,16 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
                 value={answer}
                 onChange={(e) => setAnswer(e.currentTarget.value)}
               />
-              <Button onClick={checkAnswer}>Submit</Button>
-
               {todayQuestion.type === 'single' && hintsVisible >= 1 && (
-                <Text size="sm" c="gray">Hint 1: {todayQuestion.hints[0]}</Text>
+                <Stack>
+                  <Text fw={700} ta="center" size="lg" c="red">Try again!</Text>
+                  <Text size="sm" c="orange">Hint 1: {todayQuestion.hints[0]}</Text>
+                </Stack>
               )}
               {todayQuestion.type === 'single' && hintsVisible >= 2 && (
-                <Text size="sm" c="gray">Hint 2: {todayQuestion.hints[1]}</Text>
+                <Text size="sm" c="orange">Hint 2: {todayQuestion.hints[1]}</Text>
               )}
+              <Button onClick={checkAnswer}>Submit</Button>
               {todayQuestion.type === 'list' && (
                 <Stack mt="md" align="center" gap="xs">
                   {(todayQuestion.answer as string[]).map((ans, idx) => (
@@ -295,7 +297,7 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
                 variant="light"
                 onClick={() => setShowSubmittedAnswer(true)}
               >
-                {showSubmittedAnswer ? submittedAnswer : "View Answer"}
+                {showSubmittedAnswer ? todayQuestion.answer : "View Answer"}
               </Button>
 
               {result && <Text c={isDark ? "white" : "black" } fw={700}>{result}</Text>}
