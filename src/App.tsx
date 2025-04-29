@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Button, TextInput, Title, Text, Stack, Center, Container, Modal, Group, Box, Flex } from '@mantine/core';
+import { Button, TextInput, Title, Text, Stack, Center, Container, Box, Flex } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import Confetti from 'react-confetti';
 import { useWindowSize } from './hooks/useWindowSize';
 import { distance } from 'fastest-levenshtein';
-
+import RulesPopup from './popups/rulesPopup';
+import StatsPopup from './popups/statsPopup';
 import {
   sundayQuestions,
   mondayQuestions,
@@ -199,23 +199,13 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
     if (correctCount === 6) return "True Student of the Game";
     return "You know ball";
   };
-
+  // const rulesPopup = rulesPopup;
   return (
     <Center style={{ minHeight: '100vh', backgroundColor: isDark ? '#1a1b1e' : '#f8f9fa', transition: 'background-color 0.3s ease' }}>
       <Container size="xs">
 
         {/* Rules Modal */}
-        <Modal opened={rulesOpened} onClose={handleCloseRules} title="How It Works" centered>
-          <Stack gap="md">
-            <Text size="md">- One sports trivia question per day</Text>
-            <Text size="md">- Difficulty increases throughout the week</Text>
-            <Text size="md">- 3 guesses, hints unlock after wrong tries</Text>
-            <Text size="md">- Saturday is "Top 7 Challenge" mode!</Text>
-            <Button variant="light" fullWidth onClick={handleCloseRules}>
-              Let's Go!
-            </Button>
-          </Stack>
-        </Modal>
+        <RulesPopup rulesOpened={rulesOpened} handleCloseRules={handleCloseRules} />
 
         <Stack gap="md" align="center">
           <Flex gap="xs">
@@ -306,46 +296,18 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
         </Stack>
 
         {/* Stats Modal */}
-        <Modal opened={statsOpened} onClose={closeStats} title="Your Stats" centered>
-          <Stack gap="sm" align="center">
-            {isPerfectWeek() && (
-              <Stack gap="sm" align="center">
-                <Title order={2} c="yellow">🏀 YOU KNOW BALL 🏀</Title>
-                <Confetti width={width} height={height} />
-              </Stack>
-            )}
-            <Text>Total Correct: {stats.correct}</Text>
-            <Text>Total Wrong: {stats.wrong}</Text>
-            <Text>Perfect Weeks: {stats.perfectWeeks || 0}</Text>
-            <Text>Win %: {stats.correct + stats.wrong > 0
-              ? Math.round((stats.correct / (stats.correct + stats.wrong)) * 100)
-              : 0
-            }%</Text>
-            {submittedAnswer && (
-              <Text size="sm" c="dimmed">Your Answer: {submittedAnswer}</Text>
-            )}
-            <Group mt="md">
-              {["Su", "M", "Tu", "W", "Th", "F", "Sa"].map((day, idx) => {
-                const status = weeklyProgress[idx];
-                let bg = "gray";
-                if (status === "correct") bg = "green";
-                else if (status === "wrong") bg = "red";
-                return (
-                  <Box
-                    key={idx}
-                    w={30}
-                    h={30}
-                    bg={bg}
-                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', color: 'white' }}
-                  >
-                    {day}
-                  </Box>
-                );
-              })}
-            </Group>
-            <Text fw={700} mt="sm">{calculateWeeklyTitle()}</Text>
-          </Stack>
-        </Modal>
+        <StatsPopup
+          statsOpened={statsOpened}
+          closeStats={closeStats}
+          isPerfectWeek={isPerfectWeek}
+          submittedAnswer={submittedAnswer}
+          weeklyProgress={weeklyProgress}
+          stats={stats}
+          width={width}
+          height={height}
+          calculateWeeklyTitle={calculateWeeklyTitle}
+        />
+
 
         <Center mt="xl">
           <Button variant="subtle" size="xs" color="gray" onClick={handleResetProgress} style={{ fontSize: '10px', opacity: 0.6 }}>
