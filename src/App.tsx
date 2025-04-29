@@ -74,7 +74,7 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
   const isDark = colorScheme === 'dark';
 
   const handleResetProgress = () => {
-    if (confirm("ALL YOUR STATS WILL CLEAR OUT! Are you sure you want to reset all progress? This cannot be undone.")) {
+    if (confirm("All of your stats will clear out! Are you sure you want to reset all progress? This cannot be undone.")) {
       localStorage.clear();
       window.location.reload();
     }
