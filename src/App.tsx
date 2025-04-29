@@ -5,16 +5,7 @@ import Confetti from 'react-confetti';
 import { useWindowSize } from './hooks/useWindowSize';
 import { distance } from 'fastest-levenshtein';
 
-import {
-  sundayQuestions,
-  mondayQuestions,
-  tuesdayQuestions,
-  wednesdayQuestions,
-  thursdayQuestions,
-  fridayQuestions,
-  saturdayQuestions,
-  TriviaQuestion,
-} from './data/questionBank';
+import { TriviaQuestion, allQuestions } from './data/questionBank';
 
 interface AppProps {
   toggleColorScheme: () => void;
@@ -57,18 +48,8 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
   const effectiveDay = FAKE_DAY_OVERRIDE !== null ? FAKE_DAY_OVERRIDE : today.getDay();
   const effectiveDayOfYear = FAKE_DAY_OVERRIDE !== null ? 100 : dayOfYear;
 
-  // --- Pick correct difficulty question ---
-  let todayQuestion: TriviaQuestion;
-  switch (effectiveDay) {
-    case 0: todayQuestion = sundayQuestions[effectiveDayOfYear % sundayQuestions.length]; break;
-    case 1: todayQuestion = mondayQuestions[effectiveDayOfYear % mondayQuestions.length]; break;
-    case 2: todayQuestion = tuesdayQuestions[effectiveDayOfYear % tuesdayQuestions.length]; break;
-    case 3: todayQuestion = wednesdayQuestions[effectiveDayOfYear % wednesdayQuestions.length]; break;
-    case 4: todayQuestion = thursdayQuestions[effectiveDayOfYear % thursdayQuestions.length]; break;
-    case 5: todayQuestion = fridayQuestions[effectiveDayOfYear % fridayQuestions.length]; break;
-    case 6: todayQuestion = saturdayQuestions[effectiveDayOfYear % saturdayQuestions.length]; break;
-    default: todayQuestion = sundayQuestions[0];
-  }
+  const todayQuestions = allQuestions.filter(q => q.day === effectiveDay);
+  const todayQuestion: TriviaQuestion = todayQuestions[effectiveDayOfYear % todayQuestions.length];  
 
   const sportIcon = sportIcons[todayQuestion.sport] || "";
   const isDark = colorScheme === 'dark';
