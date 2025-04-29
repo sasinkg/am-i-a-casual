@@ -272,7 +272,7 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
             </>
           ) : (
             <>
-              <Text size="md" c="white" fw="700" ta="center">{todayQuestion.question}</Text>
+              <Text size="md" c={isDark ? "white" : "black"} fw="700" ta="center">{todayQuestion.question}</Text>
               <Text size="sm" c="green">You already answered today's trivia!</Text>
               <Button
                 size="sm"
