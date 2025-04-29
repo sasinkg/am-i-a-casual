@@ -4,7 +4,7 @@ import { useDisclosure } from '@mantine/hooks';
 import Confetti from 'react-confetti';
 import { useWindowSize } from './hooks/useWindowSize';
 import { distance } from 'fastest-levenshtein';
-
+import logo from './data/logo.png'
 import { TriviaQuestion, allQuestions } from './data/questionBank';
 
 interface AppProps {
@@ -186,12 +186,14 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
       <Container size="xs">
 
         {/* Rules Modal */}
-        <Modal opened={rulesOpened} onClose={handleCloseRules} title="How It Works" centered>
+        <Modal opened={rulesOpened} onClose={handleCloseRules} title="" centered>
           <Stack gap="md">
-            <Text size="md">- One sports trivia question per day</Text>
-            <Text size="md">- Difficulty increases throughout the week</Text>
-            <Text size="md">- 3 guesses, hints unlock after wrong tries</Text>
-            <Text size="md">- Saturday is "Top 7 Challenge" mode!</Text>
+            <Center><img src={logo} alt="Am I a Casual Logo" style={{ width: '150px' }} /></Center>
+            <Text ta="center" size="lg" fw="1000">Rules:</Text>
+            <Text ta="center" size="md">One sports trivia question per day</Text>
+            <Text ta="center" size="md">Difficulty increases throughout the week</Text>
+            <Text ta="center" size="md">3 guesses, hints unlock after wrong tries</Text>
+            <Text ta="center" size="md">Saturday is "Top 7 Challenge" mode!</Text>
             <Button variant="light" fullWidth onClick={handleCloseRules}>
               Let's Go!
             </Button>
@@ -207,10 +209,10 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
               📈
             </Button>
           </Flex>
-
-          <Title order={1} c={isDark ? "white" : "black"}>
+          <img src={logo} alt="Am I a Casual Logo" style={{ width: '150px' }} />          
+          {/* <Title order={1} c={isDark ? "white" : "black"}>
             Am I A Casual?
-          </Title>
+          </Title> */}
 
           <Text size="sm" c="dimmed">{sportIcon} {today.toLocaleDateString()}</Text>
 
