@@ -272,11 +272,11 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
             </>
           ) : (
             <>
-              <Text size="lg" c="darkgreen">{todayQuestion.question}</Text>
-              <Text size="md" c="green">You already answered today's trivia!</Text>
+              <Text size="md" c="white" fw="700" ta="center">{todayQuestion.question}</Text>
+              <Text size="sm" c="green">You already answered today's trivia!</Text>
               <Button
                 size="sm"
-                color={result.includes('Correct') ? 'green' : result.includes('Casual') || result.includes('Wrong') ? 'red' : 'gray'}
+                color={result.includes('Correct') ? 'green' : result.includes('Casual') || result.includes('Wrong') ? 'red' : 'green'}
                 variant="light"
                 onClick={() => setShowSubmittedAnswer(true)}
               >
