@@ -44,7 +44,7 @@ export const allQuestions: TriviaQuestion[] = [
   { day: 2, type: "single", sport: "football", question: "Which team drafted Caleb Williams #1 in 2024?", answer: ["Chicago Bears", "Bears"], hints: ["Windy City", "Blue and orange"] },
   { day: 2, type: "single", sport: "soccer", question: "Who won the 2024 Copa America?", answer: ["Argentina"], hints: ["Messi", "South American powerhouse"] },
   { day: 2, type: "single", sport: "baseball", question: "Who won the 2024 National League MVP?", answer: ["Shohei Ohtani", "Ohtani"], hints: ["Two-way superstar", "Japanese legend"] },
-,
+
 
   // --- Wednesday (Medium-Hard) ---
   { day: 3, type: "single", sport: "basketball", question: "Which team drafted Victor Wembanyama?", answer: ["San Antonio Spurs", "Spurs", "San Antonio"], hints: ["Texas team", "Gregg Popovich"] },
@@ -56,8 +56,7 @@ export const allQuestions: TriviaQuestion[] = [
   { day: 3, type: "single", sport: "basketball", question: "What college did Kevin Durant play for?", answer: ["Texas", "Texas Longhorns"], hints: ["Burnt orange", "Big 12"] },
   { day: 3, type: "single", sport: "football", question: "How many Super Bowls have the Detroit Lions won?", answer: ["0", "Zero"], hints: ["They've never appeared in one", "NFC North team"] },
   { day: 3, type: "single", sport: "soccer", question: "Who manages Manchester City in 2024?", answer: ["Pep Guardiola", "Guardiola"], hints: ["Spanish coach", "Tiki-taka"] },
-  { day: 3, type: "single", sport: "baseball", question: "Which MLB team is known for 'Moneyball'?", answer: ["Oakland Athletics", "Athletics", "A's"], hints: ["Green & gold", "Billy Beane"] }
-,
+  { day: 3, type: "single", sport: "baseball", question: "Which MLB team is known for 'Moneyball'?", answer: ["Oakland Athletics", "Athletics", "A's"], hints: ["Green & gold", "Billy Beane"] },
 
   // --- Thursday (Hard) ---
   { day: 4, type: "single", sport: "basketball", question: "Who averages more points: Anthony Edwards or Jayson Tatum?", answer: ["Anthony Edwards", "Edwards", "Ant"], hints: ["Paid child support", "Hint is a joke!"] },
@@ -69,8 +68,8 @@ export const allQuestions: TriviaQuestion[] = [
   { day: 4, type: "single", sport: "football", question: "Who led the NFL in interceptions in 2022-23?", answer: ["Justin Simmons", "Simmons"], hints: ["Denver Broncos", "Safety"] },
   { day: 4, type: "single", sport: "soccer", question: "Which nation won Euro 2020 (played in 2021)?", answer: ["Italy"], hints: ["Azzurri", "Won on penalties"] },
   { day: 4, type: "single", sport: "baseball", question: "Who pitched a perfect game in 2023?", answer: ["Domingo German", "German"], hints: ["Yankees", "Against Oakland"] },
-  { day: 4, type: "single", sport: "hockey", question: "Which player has the most points in NHL history after Gretzky?", answer: ["Jaromir Jagr", "Jagr"], hints: ["Czech legend", "Flowing hair"] }
-,
+  { day: 4, type: "single", sport: "hockey", question: "Which player has the most points in NHL history after Gretzky?", answer: ["Jaromir Jagr", "Jagr"], hints: ["Czech legend", "Flowing hair"] },
+
 
   // --- Friday (Very Hard) ---
   { day: 5, type: "single", sport: "basketball", question: "Who won NBA Defensive Player of the Year in 2025?", answer: ["Evan Mobley", "Mobley"], hints: ["Cavaliers forward", "Elite shot blocker"] },
@@ -82,8 +81,7 @@ export const allQuestions: TriviaQuestion[] = [
   { day: 5, type: "single", sport: "football", question: "Which NFL team allowed the fewest points in 2023-24?", answer: ["Baltimore Ravens", "Ravens"], hints: ["Purple team", "AFC North"] },
   { day: 5, type: "single", sport: "soccer", question: "Which EPL goalkeeper had the most clean sheets in 2021-22?", answer: ["Alisson", "Alisson Becker"], hints: ["Liverpool", "Brazilian"] },
   { day: 5, type: "single", sport: "baseball", question: "Who won the 2023 NL Cy Young?", answer: ["Blake Snell", "Snell"], hints: ["Padres", "Two-time winner"] },
-  { day: 5, type: "single", sport: "hockey", question: "Who had the most goals in the 2023-24 NHL season?", answer: ["Auston Matthews", "Matthews"], hints: ["Maple Leafs", "Sniper"] }
-,
+  { day: 5, type: "single", sport: "hockey", question: "Who had the most goals in the 2023-24 NHL season?", answer: ["Auston Matthews", "Matthews"], hints: ["Maple Leafs", "Sniper"] },
 
   // --- Saturday (Top 7 Challenge) ---
   { day: 6, type: "list", sport: "basketball", question: "Top 7 NBA all-time scorers?", answer: ["LeBron James", "Kareem Abdul-Jabbar", "Karl Malone", "Kobe Bryant", "Michael Jordan", "Dirk Nowitzki", "Wilt Chamberlain"], hints: ["Lakers and Bulls legends"] },
@@ -95,5 +93,5 @@ export const allQuestions: TriviaQuestion[] = [
   { day: 6, type: "list", sport: "football", question: "Top 7 NFL QBs in career passing touchdowns?", answer: ["Tom Brady", "Drew Brees", "Peyton Manning", "Brett Favre", "Aaron Rodgers", "Philip Rivers", "Dan Marino"], hints: ["Modern era greats"] },
   { day: 6, type: "list", sport: "soccer", question: "Top 7 goal scorers in World Cup history?", answer: ["Miroslav Klose", "Ronaldo Nazário", "Gerd Muller", "Just Fontaine", "Lionel Messi", "Pele", "Kylian Mbappe"], hints: ["Multiple decades"] },
   { day: 6, type: "list", sport: "baseball", question: "Top 7 MLB home run leaders?", answer: ["Barry Bonds", "Hank Aaron", "Babe Ruth", "Alex Rodriguez", "Albert Pujols", "Willie Mays", "Ken Griffey Jr."], hints: ["Legends across generations"] },
-  { day: 6, type: "list", sport: "hockey", question: "Top 7 NHL all-time point leaders?", answer: ["Wayne Gretzky", "Jaromir Jagr", "Mark Messier", "Gordie Howe", "Ron Francis", "Marcel Dionne", "Steve Yzerman"], hints: ["Top 7 scorers ever"] }
+  { day: 6, type: "list", sport: "hockey", question: "Top 7 NHL all-time point leaders?", answer: ["Wayne Gretzky", "Jaromir Jagr", "Mark Messier", "Gordie Howe", "Ron Francis", "Marcel Dionne", "Steve Yzerman"], hints: ["Top 7 scorers ever"] },
 ];

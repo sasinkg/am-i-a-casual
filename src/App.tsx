@@ -49,7 +49,9 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
   const effectiveDayOfYear = FAKE_DAY_OVERRIDE !== null ? 100 : dayOfYear;
 
   const todayQuestions = allQuestions.filter(q => q.day === effectiveDay);
-  const todayQuestion: TriviaQuestion = todayQuestions[effectiveDayOfYear % todayQuestions.length];  
+  const todayQuestion: TriviaQuestion = todayQuestions.length
+    ? todayQuestions[effectiveDayOfYear % todayQuestions.length]
+    : allQuestions[0]; // fallback to something safe  
 
   const sportIcon = sportIcons[todayQuestion.sport] || "";
   const isDark = colorScheme === 'dark';
@@ -102,9 +104,7 @@ const App = ({ toggleColorScheme, colorScheme }: AppProps) => {
     setSubmittedAnswer(userAnswer);
     // console.log(todayQuestion.answer);
     if (todayQuestion.type === 'single') {
-      const correctAnswers = Array.isArray(todayQuestion.answer)
-        ? todayQuestion.answer.map(a => a.toLowerCase())
-        : [todayQuestion.answer.toLowerCase()];
+      const correctAnswers = todayQuestion.answer.map(a => a.toLowerCase());
       console.log();
       const directMatch = correctAnswers.some(ans => userAnswer === ans);
       const partialMatch = correctAnswers.some(ans => ans.includes(userAnswer) || userAnswer.includes(ans));
