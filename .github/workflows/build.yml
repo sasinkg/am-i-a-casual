@@ -23,3 +23,15 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  deploy: 
+    runs-on: ubuntu=latest
+
+    steps: 
+      - uses: actions/checkout@v3
+        with:
+          node-version: '18'
+
+      - name: Deploy
+        run: npm run deploy 
+        
