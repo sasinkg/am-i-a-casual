@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-    pull_request:
 
 jobs: 
   build:
@@ -23,15 +22,9 @@ jobs:
 
       - name: Build
         run: npm run build
-
-  deploy: 
-    runs-on: ubuntu=latest
-
-    steps: 
-      - uses: actions/checkout@v3
+      
+      - name: Deploy to github pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          node-version: '18'
-
-      - name: Deploy
-        run: npm run deploy 
-        
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
