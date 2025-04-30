@@ -1,5 +1,5 @@
 // src/pages/SecondPage.tsx
-import { Button, Center, Stack, Flex } from '@mantine/core';
+import { Button, Center, Stack, Flex, Text } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 
 interface ImpostersProps {
@@ -20,6 +20,7 @@ const Imposters = ({ toggleColorScheme, colorScheme }: ImpostersProps) => {
               {isDark ? "☀️" : "🌙"}
             </Button>
           </Flex>
+          <Text c={isDark ? 'teal' : 'pink'} fw = "1000" size="lg">Page under construction!</Text>
       </Stack>
     </Center>
   );

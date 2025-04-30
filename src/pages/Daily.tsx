@@ -8,6 +8,7 @@ import { TriviaQuestion, allQuestions } from '../data/questionBank';
 import StatsPopup from '../modals/statsPopup';
 import RulesPopup from '../modals/rulesPopup';
 import { useNavigate } from 'react-router-dom';
+
 interface DailyProps {
   toggleColorScheme: () => void;
   colorScheme: 'light' | 'dark';
@@ -208,15 +209,29 @@ const Daily = ({ toggleColorScheme, colorScheme }: DailyProps) => {
             Am I A Casual?
           </Title> */}
 
-          <Text size="sm" c="dimmed">{sportIcon} {today.toLocaleDateString()}</Text>
+          <Text size="sm" c='grey'> {today.toLocaleDateString()}</Text>
 
           {!hasAnsweredToday || todayQuestion.type === 'list' ? (
             <>
-              <Text size="lg" c={isDark ? 'white' : 'black'}>{todayQuestion.question}</Text>
+              <Text size="lg" fw="800"c={isDark ? '#ffeeba' : '#0c181f'}>{todayQuestion.question}</Text>
               <TextInput
                 placeholder="Type your answer..."
                 value={answer}
+                variant="unstyled"
+                radius='xl'
+                c={isDark ? '#0c181f' : '#ffeeba'}
+                leftSection={sportIcon}
                 onChange={(e) => setAnswer(e.currentTarget.value)}
+                styles ={isDark ? {
+                  input: {
+                    color : '#ffeeba'
+                  }
+                } : {
+                  input: {
+                    color : '#0c181f'
+                  }
+                }
+              }
               />
               {todayQuestion.type === 'single' && hintsVisible >= 1 && (
                 <Stack>
@@ -227,7 +242,7 @@ const Daily = ({ toggleColorScheme, colorScheme }: DailyProps) => {
               {todayQuestion.type === 'single' && hintsVisible >= 2 && (
                 <Text size="sm" c="orange">Hint 2: {todayQuestion.hints[1]}</Text>
               )}
-              <Button onClick={checkAnswer}>Submit</Button>
+              <Button color = {isDark ? 'teal' : 'green' } onClick={checkAnswer}>Submit</Button>
               {todayQuestion.type === 'list' && (
                 <Stack mt="md" align="center" gap="xs">
                   {(todayQuestion.answer as string[]).map((ans, idx) => (
